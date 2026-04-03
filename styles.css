@@ -1038,147 +1038,197 @@ input[type="text"].message-input::placeholder {
    RESPONSIVE - MOBILE (max-width: 768px)
    ======================================== */
 @media (max-width: 768px) {
-    /* Landing Page */
+    /* Prevent horizontal scroll */
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    
+    /* Landing Page - Better containment */
     #landingPage {
-        padding: 32px 20px;
+        padding: 24px 16px;
         max-width: 100%;
+        position: relative;
+        overflow-x: hidden;
+    }
+    
+    /* Background Logo - Mobile Fix - SMALLER and RIGHT SIDE ONLY */
+    .bg-logo {
+        position: absolute;
+        top: 2%;
+        right: -15%;
+        left: auto;
+        transform: none;
+        width: 180px;
+        height: 180px;
+        opacity: 0.08;
+        z-index: 0;
+        pointer-events: none;
     }
     
     /* Header */
     .header {
-        margin-bottom: 32px;
+        margin-bottom: 24px;
+        position: relative;
+        z-index: 2;
     }
     
     .logo-icon {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .logo-text {
-        font-size: 20px;
-    }
-    
-    /* Hero */
-    .hero {
-        margin-bottom: 40px;
-    }
-    
-    .hero-title {
-        font-size: 28px;
-        line-height: 1.2;
-        margin-bottom: 12px;
-    }
-    
-    .hero-subtitle {
-        font-size: 15px;
-        margin-bottom: 20px;
-    }
-    
-    .hero-badge {
-        padding: 8px 16px;
-        font-size: 12px;
-    }
-    
-    /* Motion Section */
-    .motion-section {
-        margin-bottom: 40px;
-    }
-    
-    .motion-container {
-        padding: 16px;
-    }
-    
-    .mock-avatar {
         width: 32px;
         height: 32px;
     }
     
+    .logo-text {
+        font-size: 18px;
+    }
+    
+    /* Hero - Better spacing and left-aligned feel */
+    .hero {
+        margin-bottom: 32px;
+        text-align: left;
+        position: relative;
+        z-index: 2;
+        padding: 0;
+    }
+    
+    .hero-title {
+        font-size: 24px;
+        line-height: 1.25;
+        margin-bottom: 10px;
+        max-width: 90%;
+    }
+    
+    .hero-subtitle {
+        font-size: 14px;
+        margin-bottom: 16px;
+        color: var(--text-secondary);
+    }
+    
+    .hero-badge {
+        padding: 8px 14px;
+        font-size: 12px;
+        display: inline-flex;
+    }
+    
+    /* Motion Section - Better spacing */
+    .motion-section {
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .motion-container {
+        padding: 14px;
+    }
+    
+    .mock-editor, .mock-client {
+        margin-bottom: 12px;
+    }
+    
+    .mock-avatar {
+        width: 28px;
+        height: 28px;
+    }
+    
     .mock-name {
-        font-size: 13px;
-    }
-    
-    .mock-status {
-        font-size: 11px;
-    }
-    
-    .mock-btn {
-        padding: 6px 12px;
-        font-size: 11px;
-    }
-    
-    .mock-thumb {
-        height: 48px;
-    }
-    
-    .mock-desc {
         font-size: 12px;
     }
     
-    /* Value Props */
+    .mock-status {
+        font-size: 10px;
+    }
+    
+    .mock-btn {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+    
+    .mock-portfolio {
+        gap: 6px;
+    }
+    
+    .mock-thumb {
+        height: 40px;
+    }
+    
+    .mock-desc {
+        font-size: 11px;
+    }
+    
+    /* Value Props - Better spacing */
     .value-props {
         grid-template-columns: 1fr;
         gap: 12px;
-        margin-bottom: 40px;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 2;
     }
     
     .value-card {
-        padding: 20px;
+        padding: 18px 16px;
     }
     
     .value-icon {
-        font-size: 24px;
-        margin-bottom: 10px;
+        font-size: 22px;
+        margin-bottom: 8px;
     }
     
     .value-card h3 {
-        font-size: 15px;
+        font-size: 14px;
+        margin-bottom: 6px;
     }
     
     .value-card p {
-        font-size: 13px;
+        font-size: 12px;
     }
     
-    /* FAQ */
+    /* FAQ - Better spacing */
     .faq-section {
-        margin-bottom: 40px;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 2;
     }
     
     .section-title {
-        font-size: 20px;
-        margin-bottom: 20px;
+        font-size: 18px;
+        margin-bottom: 16px;
+        text-align: left;
+    }
+    
+    .faq-item {
+        margin-bottom: 10px;
     }
     
     .faq-question {
-        padding: 16px;
-        font-size: 14px;
-    }
-    
-    .faq-icon {
-        font-size: 16px;
-    }
-    
-    .faq-item.open .faq-answer {
-        padding: 0 16px 16px;
-    }
-    
-    .faq-answer p {
+        padding: 14px 16px;
         font-size: 13px;
     }
     
-    /* Trust Signals */
+    .faq-icon {
+        font-size: 14px;
+    }
+    
+    .faq-answer p {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+    
+    /* Trust Signals - Better spacing */
     .trust-signals {
         flex-direction: column;
-        gap: 16px;
-        margin-bottom: 32px;
-        padding: 20px;
+        gap: 12px;
+        margin-bottom: 28px;
+        padding: 18px 16px;
+        position: relative;
+        z-index: 2;
     }
     
     .trust-number {
-        font-size: 28px;
+        font-size: 24px;
     }
     
     .trust-icon {
-        font-size: 20px;
+        font-size: 18px;
     }
     
     .trust-label {
@@ -1186,142 +1236,143 @@ input[type="text"].message-input::placeholder {
     }
     
     .trust-divider {
-        width: 40px;
+        width: 30px;
         height: 1px;
     }
     
-    /* CTA */
+    /* CTA - Better spacing */
     .cta-section {
-        margin-bottom: 32px;
+        margin-bottom: 28px;
+        position: relative;
+        z-index: 2;
+        text-align: left;
     }
     
     .cta-title {
-        font-size: 20px;
-        margin-bottom: 16px;
+        font-size: 18px;
+        margin-bottom: 14px;
     }
     
     .cta-btn {
         width: 100%;
-        padding: 16px 24px;
-        font-size: 15px;
+        max-width: none;
+        padding: 14px 20px;
+        font-size: 14px;
     }
     
-    /* Contact */
+    /* Contact - Better spacing */
     .contact-section {
-        padding: 24px 20px;
-        margin-bottom: 24px;
+        padding: 18px 16px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 2;
     }
     
     .contact-section p {
-        font-size: 13px;
-    }
-    
-    /* Footer */
-    .footer {
-        padding: 20px;
-    }
-    
-    .footer p {
         font-size: 12px;
     }
     
-    /* Background Logo */
-    .bg-logo {
-        width: 300px;
-        height: 300px;
-        opacity: 0.3;
+    /* Footer - Better spacing */
+    .footer {
+        padding: 16px;
+        position: relative;
+        z-index: 2;
     }
     
-    /* Form Page */
+    .footer p {
+        font-size: 11px;
+    }
+    
+    /* Form Page - Better containment */
     #formPage {
-        padding: 20px;
+        padding: 16px;
+        min-height: 100vh;
     }
     
     .form-container {
-        padding: 24px 20px;
+        padding: 20px 16px;
         max-width: 100%;
     }
     
     .form-container.compact {
-        padding: 20px;
+        padding: 16px;
     }
     
     .back-btn {
-        margin-bottom: 16px;
+        margin-bottom: 12px;
         font-size: 13px;
     }
     
     .form-header {
-        margin-bottom: 24px;
+        margin-bottom: 20px;
     }
     
     .form-title {
-        font-size: 20px;
+        font-size: 18px;
     }
     
     .form-subtitle {
-        font-size: 13px;
+        font-size: 12px;
     }
     
-    /* Form Elements */
+    /* Form Elements - More compact */
     .preregister-form.compact .form-group {
-        margin-bottom: 14px;
+        margin-bottom: 12px;
     }
     
     label {
-        font-size: 13px;
-        margin-bottom: 6px;
+        font-size: 12px;
+        margin-bottom: 5px;
     }
     
     input[type="text"],
     input[type="email"] {
-        padding: 12px 14px;
+        padding: 10px 12px;
         font-size: 16px; /* Prevent zoom on iOS */
     }
     
-    /* Role Toggle */
+    /* Role Toggle - More compact */
     .role-toggle {
         gap: 6px;
     }
     
     .role-btn {
-        padding: 12px 8px;
-        font-size: 13px;
+        padding: 10px 8px;
+        font-size: 12px;
         flex: 1;
         min-width: auto;
     }
     
-    /* Message Input */
+    /* Message Input - More compact */
     #userMessage {
-        padding: 12px 14px;
-        font-size: 15px;
+        padding: 10px 12px;
+        font-size: 14px;
     }
     
-    /* Submit Button */
+    /* Submit Button - More compact */
     .submit-btn {
-        padding: 14px;
-        font-size: 15px;
-        margin-top: 8px;
+        padding: 12px;
+        font-size: 14px;
+        margin-top: 6px;
     }
     
-    /* Duplicate Message */
+    /* Duplicate Message - More compact */
     .duplicate-message {
-        padding: 20px;
+        padding: 16px;
     }
     
     .duplicate-icon {
-        font-size: 28px;
+        font-size: 24px;
     }
     
     .duplicate-message h3 {
-        font-size: 15px;
+        font-size: 14px;
     }
     
     .duplicate-message p {
-        font-size: 13px;
+        font-size: 12px;
     }
 }
-
 /* ========================================
    RESPONSIVE - SMALL MOBILE (max-width: 480px)
    ======================================== */
