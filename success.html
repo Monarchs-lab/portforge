@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the Forge | PortForge</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Success page specific styles */
+        .success-page {
+            min-height: 100vh;
+            background: var(--bg-primary);
+        }
+
+        /* Section 1: Hero */
+        .success-hero {
+            text-align: center;
+            padding: 80px 24px 60px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .success-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 200, 83, 0.1);
+            border: 1px solid rgba(0, 200, 83, 0.3);
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-size: 13px;
+            color: #00C853;
+            font-weight: 500;
+            margin-bottom: 32px;
+        }
+
+        .success-badge::before {
+            content: '✓';
+            font-weight: 700;
+        }
+
+        .success-hero h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .success-hero p {
+            color: var(--text-secondary);
+            font-size: 17px;
+        }
+
+        /* Section 2: How It Works */
+        .how-section {
+            background: var(--bg-card);
+            padding: 60px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .how-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .how-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-soft);
+            border: 1px solid rgba(108, 122, 255, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Section 3: Benefits */
+        .benefits-section {
+            padding: 60px 24px;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 32px;
+        }
+
+        .benefit-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            border-color: rgba(108, 122, 255, 0.2);
+        }
+
+        .benefit-icon {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .benefit-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .benefit-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Section 4: Rank Teaser */
+        .rank-section {
+            background: var(--bg-card);
+            padding: 60px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .rank-path {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 32px 0;
+            flex-wrap: wrap;
+        }
+
+        .rank-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rank-flame {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .rank-spark {
+            background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%);
+            border: 2px solid #4A5568;
+        }
+
+        .rank-ember {
+            background: linear-gradient(135deg, #6C7AFF 0%, #4C5CE0 100%);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 20px rgba(108, 122, 255, 0.3);
+        }
+
+        .rank-flame-item {
+            background: linear-gradient(135deg, #F25F3A 0%, #D94520 100%);
+            border: 2px solid #F25F3A;
+            box-shadow: 0 0 30px rgba(242, 95, 58, 0.4);
+        }
+
+        .rank-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rank-arrow {
+            color: var(--text-muted);
+            font-size: 20px;
+        }
+
+        .rank-mystery {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px dashed var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-muted);
+        }
+
+        .rank-message {
+            color: var(--text-secondary);
+            font-size: 14px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Section 5: Identity */
+        .identity-section {
+            padding: 80px 24px;
+            text-align: center;
+        }
+
+        .identity-quote {
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.4;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            color: var(--text-primary);
+        }
+
+        .identity-quote span {
+            color: var(--accent);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: var(--bg-card);
+            padding: 40px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .contact-section p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .contact-section a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-section a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .success-footer {
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .success-footer p {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Animations */
+        .success-page .section-container {
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @media (max-width: 600px) {
+            .success-hero h1 {
+                font-size: 28px;
+            }
+
+            .rank-path {
+                gap: 12px;
+            }
+
+            .rank-flame {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+
+            .identity-quote {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="success-page">
+    <!-- Section 1: Hero -->
+    <section class="success-hero">
+        <div class="success-badge">Reserved</div>
+        <h1>Welcome to the Forge</h1>
+        <p>You are now part of a trust-based system.</p>
+    </section>
+
+    <!-- Section 2: How It Works -->
+    <section class="how-section">
+        <div class="section-container">
+            <p class="section-title">How PortForge Works</p>
+            <div class="how-steps">
+                <div class="how-step">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3>Complete work</h3>
+                        <p>Deliver quality edits. Every project builds your reputation.</p>
+                    </div>
+                </div>
+                <div class="how-step">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3>Gain trust</h3>
+                        <p>Positive reviews and on-time delivery increase your standing.</p>
+                    </div>
+                </div>
+                <div class="how-step">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3>Unlock growth</h3>
+                        <p>Higher trust means better opportunities and faster payouts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Benefits -->
+    <section class="benefits-section">
+        <div class="section-container">
+            <p class="section-title">Core Benefits</p>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">⚡</div>
+                    <h3>No waiting line</h3>
+                    <p>Skill determines your growth. Not time spent waiting.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🛡</div>
+                    <h3>No spam</h3>
+                    <p>Only real opportunities. No random messages or lowball offers.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">💰</div>
+                    <h3>Fast payouts</h3>
+                    <p>Higher trust unlocks faster payment processing.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">📊</div>
+                    <h3>Proof-based hiring</h3>
+                    <p>Clients hire based on your work, not promises.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Rank System -->
+    <section class="rank-section">
+        <div class="section-container">
+            <p class="section-title">The Path Ahead</p>
+            <div class="rank-path">
+                <div class="rank-item">
+                    <div class="rank-flame rank-spark">✦</div>
+                    <span class="rank-name">Spark</span>
+                </div>
+                <span class="rank-arrow">→</span>
+                <div class="rank-item">
+                    <div class="rank-flame rank-ember">🔥</div>
+                    <span class="rank-name">Ember</span>
+                </div>
+                <span class="rank-arrow">→</span>
+                <div class="rank-item">
+                    <div class="rank-flame rank-flame-item">🔥</div>
+                    <span class="rank-name">Flame</span>
+                </div>
+                <span class="rank-arrow">→</span>
+                <div class="rank-mystery">?</div>
+            </div>
+            <p class="rank-message">Higher ranks unlock better jobs, faster payouts, and increased visibility.</p>
+        </div>
+    </section>
+
+    <!-- Section 5: Identity -->
+    <section class="identity-section">
+        <div class="section-container">
+            <p class="identity-quote">
+                This is not a freelance platform.<br>
+                This is a <span>reputation system</span> built on trust.
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="section-container">
+            <p>Questions? Contact us at <a href="mailto:portforgeofficial@gmail.com">portforgeofficial@gmail.com</a></p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="success-footer">
+        <p>© 2026 PortForge. The Guild for Editors & Clients.</p>
+    </footer>
+</body>
+</html>
