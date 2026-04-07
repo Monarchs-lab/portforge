@@ -1,312 +1,283 @@
-// PortForge - Minimal Pre-register (Production Ready)
+// PortForge — script.js
+// Pre-register page logic
 
-let currentRole = 'both';
-const REGISTRATIONS_KEY = 'portforge_registrations';
-const MAX_MESSAGE_LENGTH = 500;
-const MAX_USERNAME_LENGTH = 20;
+var STORE_KEY  = 'pf_members';
+var BASE_COUNT = 127; // Base member count — changes as real people join
+var selectedRole = 'both';
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', function () {
+  setupCounter();
+  setupFAQ();
+  setupRoles();
+  setupForm();
+});
 
-function init() {
-    setupFAQ();
-    setupRoleToggle();
-    setupForm();
-    console.log('%c PortForge ', 'background: #6C7AFF; color: #0A0A0F; font-size: 20px; font-weight: bold; padding: 8px 16px; border-radius: 8px;');
-    console.log('%c Pre-register v4.1 - Ready ', 'color: #00C853;');
-}
-
-// Navigation
+// ─────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────
 function showForm() {
-    const landing = document.getElementById('landingPage');
-    const form = document.getElementById('formPage');
-    if (landing && form) {
-        landing.classList.add('hidden');
-        form.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  document.getElementById('landingPage').classList.add('hidden');
+  document.getElementById('formPage').classList.remove('hidden');
+  window.scrollTo(0, 0);
 }
 
 function showLanding() {
-    const landing = document.getElementById('landingPage');
-    const form = document.getElementById('formPage');
-    if (landing && form) {
-        form.classList.add('hidden');
-        landing.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  document.getElementById('formPage').classList.add('hidden');
+  document.getElementById('landingPage').classList.remove('hidden');
+  window.scrollTo(0, 0);
 }
 
-// FAQ Toggle
-function setupFAQ() {
-    const items = document.querySelectorAll('.faq-item');
-    items.forEach(item => {
-        const question = item.querySelector('.faq-question');
-        if (question) {
-            question.addEventListener('click', () => {
-                const isOpen = item.classList.contains('open');
-                // Close all
-                items.forEach(i => i.classList.remove('open'));
-                // Open clicked if wasn't open
-                if (!isOpen) item.classList.add('open');
-            });
-        }
-    });
-}
-
-// Role Toggle
-function setupRoleToggle() {
-    const buttons = document.querySelectorAll('.role-btn');
-    buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentRole = btn.dataset.role || 'both';
-        });
-    });
-}
-
-// Form Handling
-function setupForm() {
-    const form = document.getElementById('preregisterForm');
-    if (!form) return;
-
-    // Real-time validation
-    const emailInput = document.getElementById('email');
-    const usernameInput = document.getElementById('username');
-    const messageInput = document.getElementById('userMessage');
-
-    if (emailInput) {
-        emailInput.addEventListener('blur', () => validateEmail(emailInput));
-    }
-    if (usernameInput) {
-        usernameInput.addEventListener('blur', () => validateUsername(usernameInput));
-        usernameInput.addEventListener('input', () => sanitizeInput(usernameInput));
-    }
-    if (messageInput) {
-        messageInput.addEventListener('input', () => {
-            if (messageInput.value.length > MAX_MESSAGE_LENGTH) {
-                messageInput.value = messageInput.value.substring(0, MAX_MESSAGE_LENGTH);
-            }
-        });
-    }
-
-    form.addEventListener('submit', handleSubmit);
-}
-
-function validateEmail(input) {
-    const email = input.value.trim().toLowerCase();
-    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const errorEl = document.getElementById('emailError');
-    
-    if (!email) {
-        showError('email', 'Email is required');
-        return false;
-    }
-    if (!isValid) {
-        showError('email', 'Enter a valid email address');
-        return false;
-    }
-    clearError('email');
-    return true;
-}
-
-function validateUsername(input) {
-    const username = input.value.trim().toLowerCase();
-    const errorEl = document.getElementById('usernameError');
-    
-    if (!username) {
-        showError('username', 'Username is required');
-        return false;
-    }
-    if (username.length < 3) {
-        showError('username', 'Username must be at least 3 characters');
-        return false;
-    }
-    if (username.length > MAX_USERNAME_LENGTH) {
-        showError('username', `Username must be under ${MAX_USERNAME_LENGTH} characters`);
-        return false;
-    }
-    if (!/^[a-z0-9_]+$/.test(username)) {
-        showError('username', 'Only letters, numbers, and underscores allowed');
-        return false;
-    }
-    clearError('username');
-    return true;
-}
-
-function sanitizeInput(input) {
-    // Remove special chars that could cause issues
-    input.value = input.value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
-}
-
-function handleSubmit(e) {
-    e.preventDefault();
-    clearAllErrors();
-
-    const emailInput = document.getElementById('email');
-    const usernameInput = document.getElementById('username');
-    const messageInput = document.getElementById('userMessage');
-
-    const email = emailInput.value.trim().toLowerCase();
-    const username = usernameInput.value.trim().toLowerCase();
-    const message = messageInput ? messageInput.value.trim().substring(0, MAX_MESSAGE_LENGTH) : '';
-
-    // Validate
-    let hasError = false;
-
-    if (!validateEmail(emailInput)) hasError = true;
-    if (!validateUsername(usernameInput)) hasError = true;
-
-    if (hasError) return;
-
-    // Check duplicates safely
-    const existing = getExistingRegistrations();
-    const emailTaken = existing.find(r => r.email === email);
-    const usernameTaken = existing.find(r => r.username === username);
-
-    if (emailTaken && usernameTaken) {
-        showDuplicate('exists');
-        return;
-    }
-    if (emailTaken) {
-        showDuplicate('email');
-        return;
-    }
-    if (usernameTaken) {
-        showDuplicate('username');
-        return;
-    }
-
-    // Prepare data
-    const data = {
-        id: generateId(),
-        email: escapeHtml(email),
-        username: escapeHtml(username),
-        role: currentRole,
-        message: escapeHtml(message),
-        createdAt: new Date().toISOString(),
-        status: 'waitlist',
-        userAgent: navigator.userAgent
-    };
-
-    // Show loading state
-    setLoading(true);
-
-    // Simulate API delay
-    setTimeout(() => {
-        // Save
-        saveRegistration(data);
-        // Redirect
-        window.location.href = 'success.html';
-    }, 1200);
-}
-
-// Storage Functions
-function getExistingRegistrations() {
-    try {
-        const data = localStorage.getItem(REGISTRATIONS_KEY);
-        return data ? JSON.parse(data) : [];
-    } catch (e) {
-        console.error('Failed to load registrations:', e);
-        return [];
-    }
-}
-
-function saveRegistration(data) {
-    try {
-        const existing = getExistingRegistrations();
-        existing.push(data);
-        localStorage.setItem(REGISTRATIONS_KEY, JSON.stringify(existing));
-        console.log('Registration saved:', data.id);
-    } catch (e) {
-        console.error('Failed to save registration:', e);
-        alert('Something went wrong. Please try again.');
-    }
-}
-
-// UI Helpers
-function generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-}
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function showError(fieldId, message) {
-    const el = document.getElementById(fieldId + 'Error');
-    if (el) {
-        el.textContent = message;
-        el.style.color = '#F25F3A';
-    }
-    const input = document.getElementById(fieldId);
-    if (input) input.style.borderColor = '#F25F3A';
-}
-
-function clearError(fieldId) {
-    const el = document.getElementById(fieldId + 'Error');
-    if (el) {
-        el.textContent = '';
-        el.style.color = '';
-    }
-    const input = document.getElementById(fieldId);
-    if (input) input.style.borderColor = '';
-}
-
-function clearAllErrors() {
-    document.querySelectorAll('.error-msg').forEach(el => {
-        el.textContent = '';
-        el.style.color = '';
-    });
-    document.querySelectorAll('input').forEach(el => {
-        el.style.borderColor = '';
-    });
-}
-
-function showDuplicate(type) {
-    const msg = document.getElementById('duplicateMessage');
-    const form = document.getElementById('preregisterForm');
-    if (!msg || !form) return;
-
-    const title = msg.querySelector('h3');
-    const desc = msg.querySelector('p');
-    const icon = msg.querySelector('.duplicate-icon');
-
-    if (!title || !desc || !icon) return;
-
-    // Style based on type
-    if (type === 'exists') {
-        title.textContent = 'Welcome back';
-        desc.textContent = 'This account already exists. Check your email for access details.';
-        icon.textContent = '✓';
-        msg.style.cssText = 'background: rgba(0,200,83,0.1); border-color: rgba(0,200,83,0.3);';
-    } else {
-        title.textContent = type === 'email' ? 'Email taken' : 'Username reserved';
-        desc.textContent = type === 'email' 
-            ? 'This email is already registered with us.' 
-            : 'This username is already taken. Try another one.';
-        icon.textContent = '⚠';
-        msg.style.cssText = 'background: rgba(242,95,58,0.1); border-color: rgba(242,95,58,0.3);';
-    }
-
-    form.style.display = 'none';
-    msg.classList.remove('hidden');
-}
-
-function setLoading(isLoading) {
-    const btn = document.getElementById('submitBtn');
-    if (!btn) return;
-    
-    const btnText = btn.querySelector('.btn-text');
-    const loader = btn.querySelector('.btn-loader');
-    
-    if (btnText) btnText.textContent = isLoading ? 'Securing...' : 'Secure my spot';
-    if (loader) loader.classList.toggle('hidden', !isLoading);
-    btn.disabled = isLoading;
-}
-
-// Expose functions for onclick handlers
-window.showForm = showForm;
+// Expose to onclick attributes
+window.showForm    = showForm;
 window.showLanding = showLanding;
+
+// ─────────────────────────────────────
+// COUNTER — animates up to real total
+// ─────────────────────────────────────
+function setupCounter() {
+  var members = loadMembers();
+  var total   = BASE_COUNT + members.length;
+
+  var targets = ['countNum', 'proofNum'];
+
+  targets.forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+
+    var current = 0;
+    var step    = total / 70; // 70 frames
+    var timer   = setInterval(function () {
+      current += step;
+      if (current >= total) {
+        current = total;
+        clearInterval(timer);
+      }
+      el.textContent = Math.floor(current).toLocaleString();
+    }, 18);
+  });
+}
+
+// ─────────────────────────────────────
+// FAQ ACCORDION
+// ─────────────────────────────────────
+function setupFAQ() {
+  var items = document.querySelectorAll('.faq-item');
+  items.forEach(function (item) {
+    var btn = item.querySelector('.faq-btn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var isOpen = item.classList.contains('open');
+      // close all
+      items.forEach(function (i) { i.classList.remove('open'); });
+      // open this one if it was closed
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+}
+
+// ─────────────────────────────────────
+// ROLE SELECTOR
+// ─────────────────────────────────────
+function setupRoles() {
+  var btns = document.querySelectorAll('.role-opt');
+  btns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      btns.forEach(function (b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      selectedRole = btn.getAttribute('data-role') || 'both';
+    });
+  });
+}
+
+// ─────────────────────────────────────
+// FORM
+// ─────────────────────────────────────
+function setupForm() {
+  var form     = document.getElementById('regForm');
+  var emailEl  = document.getElementById('emailInput');
+  var userEl   = document.getElementById('usernameInput');
+  var msgEl    = document.getElementById('msgInput');
+
+  if (!form) return;
+
+  // sanitise username live as user types
+  if (userEl) {
+    userEl.addEventListener('input', function () {
+      var v = userEl.value;
+      var clean = v.toLowerCase().replace(/[^a-z0-9_.]/g, '');
+      if (v !== clean) userEl.value = clean;
+    });
+    userEl.addEventListener('blur', function () { validateUsername(); });
+  }
+
+  if (emailEl) {
+    emailEl.addEventListener('blur', function () { validateEmail(); });
+  }
+
+  // cap message at 500 chars
+  if (msgEl) {
+    msgEl.addEventListener('input', function () {
+      if (msgEl.value.length > 500) msgEl.value = msgEl.value.slice(0, 500);
+    });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    handleSubmit();
+  });
+}
+
+function handleSubmit() {
+  clearErrors();
+
+  var emailEl = document.getElementById('emailInput');
+  var userEl  = document.getElementById('usernameInput');
+  var msgEl   = document.getElementById('msgInput');
+
+  var email    = emailEl.value.trim().toLowerCase();
+  var username = userEl.value.trim().toLowerCase();
+  var message  = msgEl ? msgEl.value.trim().slice(0, 500) : '';
+
+  var ok = true;
+  if (!validateEmail())    ok = false;
+  if (!validateUsername()) ok = false;
+  if (!ok) return;
+
+  var members     = loadMembers();
+  var emailTaken  = members.some(function (m) { return m.email    === email;    });
+  var userTaken   = members.some(function (m) { return m.username === username; });
+
+  if (emailTaken || userTaken) {
+    showAlreadyIn();
+    return;
+  }
+
+  setLoading(true);
+
+  var entry = {
+    id:       uid(),
+    email:    email,
+    username: username,
+    role:     selectedRole,
+    message:  safeText(message),
+    joinedAt: new Date().toISOString()
+  };
+
+  setTimeout(function () {
+    saveEntry(entry);
+    window.location.href = 'success.html';
+  }, 1000);
+}
+
+// ─────────────────────────────────────
+// VALIDATION
+// ─────────────────────────────────────
+function validateEmail() {
+  var el  = document.getElementById('emailInput');
+  var err = document.getElementById('emailErr');
+  var v   = el.value.trim().toLowerCase();
+
+  if (!v) {
+    setErr(el, err, 'Email is required'); return false;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) {
+    setErr(el, err, 'Enter a valid email address'); return false;
+  }
+  clearErr(el, err);
+  return true;
+}
+
+function validateUsername() {
+  var el  = document.getElementById('usernameInput');
+  var err = document.getElementById('usernameErr');
+  var v   = el.value.trim().toLowerCase();
+
+  if (!v)        { setErr(el, err, 'Username is required'); return false; }
+  if (v.length < 3)  { setErr(el, err, 'Must be at least 3 characters'); return false; }
+  if (v.length > 20) { setErr(el, err, 'Must be 20 characters or fewer'); return false; }
+  if (!/^[a-z0-9_.]+$/.test(v)) {
+    setErr(el, err, 'Letters, numbers, underscores and dots only'); return false;
+  }
+  if (/^[._]|[._]$/.test(v)) {
+    setErr(el, err, "Can't start or end with . or _"); return false;
+  }
+  if (/[._]{2,}/.test(v)) {
+    setErr(el, err, 'No consecutive dots or underscores'); return false;
+  }
+
+  clearErr(el, err);
+  return true;
+}
+
+function setErr(inputEl, errEl, msg) {
+  if (inputEl) inputEl.classList.add('bad');
+  if (errEl)   errEl.textContent = msg;
+}
+
+function clearErr(inputEl, errEl) {
+  if (inputEl) inputEl.classList.remove('bad');
+  if (errEl)   errEl.textContent = '';
+}
+
+function clearErrors() {
+  document.querySelectorAll('input.bad').forEach(function (el) { el.classList.remove('bad'); });
+  document.querySelectorAll('.field-err').forEach(function (el) { el.textContent = ''; });
+}
+
+// ─────────────────────────────────────
+// ALREADY-IN MESSAGE
+// ─────────────────────────────────────
+function showAlreadyIn() {
+  var box  = document.getElementById('alreadyMsg');
+  var form = document.getElementById('regForm');
+  if (box)  box.classList.remove('hidden');
+  if (form) form.style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────────────
+// LOADING STATE
+// ─────────────────────────────────────
+function setLoading(on) {
+  var btn     = document.getElementById('submitBtn');
+  var label   = document.getElementById('btnLabel');
+  var spinner = document.getElementById('btnSpinner');
+
+  if (!btn) return;
+  btn.disabled = on;
+  if (label)   label.textContent = on ? 'Securing your spot…' : 'Lock in my spot';
+  if (spinner) spinner.classList.toggle('hidden', !on);
+}
+
+// ─────────────────────────────────────
+// LOCAL STORAGE
+// ─────────────────────────────────────
+function loadMembers() {
+  try {
+    var d = localStorage.getItem(STORE_KEY);
+    return d ? JSON.parse(d) : [];
+  } catch (e) { return []; }
+}
+
+function saveEntry(entry) {
+  try {
+    var members = loadMembers();
+    members.push(entry);
+    localStorage.setItem(STORE_KEY, JSON.stringify(members));
+  } catch (e) {
+    console.error('PortForge: save failed', e);
+  }
+}
+
+// ─────────────────────────────────────
+// UTILITIES
+// ─────────────────────────────────────
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function safeText(str) {
+  var d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
