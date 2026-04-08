@@ -23,8 +23,8 @@
  */
 
 // ─── CONFIG ─────────────────────────────────────────────────────────────────
-const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';  // ← fill in
-const SUPABASE_KEY = 'YOUR_PUBLIC_ANON_KEY';                  // ← fill in
+const SUPABASE_URL = 'https://oanxvtxlarmrqkeoxfdc.supabase.co';  // ← fill in
+const SUPABASE_KEY = 'sb_publishable_VdtFg-6K6r_mTBS9O6AJxQ_-HDuQtAu';                  // ← fill in
 
 /** Displayed count = BASE_COUNT + real DB rows.
  *  Update this number whenever you want to bump the baseline display. */
