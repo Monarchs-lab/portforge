@@ -1,283 +1,390 @@
-// PortForge — script.js
-// Pre-register page logic
+/**
+ * PortForge — script.js  (production-final)
+ *
+ * SETUP — fill in your two Supabase values below, then deploy.
+ * Get them from: Supabase Dashboard → Project → Settings → API
+ *
+ * SUPABASE CHECKLIST (do this once in your dashboard):
+ *  1. Enable RLS on the "users" table
+ *  2. Add INSERT policy:  target=anon, check=true
+ *  3. Do NOT add a SELECT policy (keeps data private)
+ *  4. Create this RPC function for the counter (paste into SQL Editor):
+ *
+ *     create or replace function get_user_count()
+ *     returns integer
+ *     language sql
+ *     security definer
+ *     as $$
+ *       select count(*)::integer from users;
+ *     $$;
+ *
+ *  5. Grant execute to anon:
+ *     grant execute on function get_user_count() to anon;
+ */
 
-var STORE_KEY  = 'pf_members';
-var BASE_COUNT = 127; // Base member count — changes as real people join
-var selectedRole = 'both';
+// ─── CONFIG ─────────────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';  // ← fill in
+const SUPABASE_KEY = 'YOUR_PUBLIC_ANON_KEY';                  // ← fill in
 
-document.addEventListener('DOMContentLoaded', function () {
-  setupCounter();
-  setupFAQ();
-  setupRoles();
-  setupForm();
+/** Displayed count = BASE_COUNT + real DB rows.
+ *  Update this number whenever you want to bump the baseline display. */
+const BASE_COUNT = 127;
+// ────────────────────────────────────────────────────────────────────────────
+
+/** Valid role values — must match your DB check constraint */
+const VALID_ROLES = ['editor', 'client', 'both'];
+
+let db           = null;
+let selectedRole = 'both';
+let isSubmitting = false;   // prevent double-submit
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  initCounter();
+  initFAQ();
+  initRoles();
+  initForm();
 });
 
-// ─────────────────────────────────────
-// NAVIGATION
-// ─────────────────────────────────────
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
 function showForm() {
   document.getElementById('landingPage').classList.add('hidden');
   document.getElementById('formPage').classList.remove('hidden');
-  window.scrollTo(0, 0);
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 function showLanding() {
   document.getElementById('formPage').classList.add('hidden');
   document.getElementById('landingPage').classList.remove('hidden');
-  window.scrollTo(0, 0);
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-// Expose to onclick attributes
+// Expose to inline onclick handlers
 window.showForm    = showForm;
 window.showLanding = showLanding;
 
-// ─────────────────────────────────────
-// COUNTER — animates up to real total
-// ─────────────────────────────────────
-function setupCounter() {
-  var members = loadMembers();
-  var total   = BASE_COUNT + members.length;
+// ─── COUNTER ─────────────────────────────────────────────────────────────────
+/**
+ * Calls the RPC function instead of SELECT *
+ * → no SELECT policy needed → no data leak possible
+ */
+async function initCounter() {
+  let total = BASE_COUNT;
 
-  var targets = ['countNum', 'proofNum'];
+  try {
+    const { data, error } = await db.rpc('get_user_count');
+    if (!error && typeof data === 'number') {
+      total = BASE_COUNT + data;
+    }
+  } catch (e) {
+    // Silently fall back to BASE_COUNT — counter is cosmetic
+    console.warn('[PortForge] Counter RPC failed, using base count.', e);
+  }
 
-  targets.forEach(function (id) {
-    var el = document.getElementById(id);
+  animateCount(total);
+}
+
+function animateCount(target) {
+  if (target === 0) {
+    ['countNum', 'proofNum'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = '0';
+    });
+    return;
+  }
+
+  ['countNum', 'proofNum'].forEach(id => {
+    const el = document.getElementById(id);
     if (!el) return;
 
-    var current = 0;
-    var step    = total / 70; // 70 frames
-    var timer   = setInterval(function () {
-      current += step;
-      if (current >= total) {
-        current = total;
-        clearInterval(timer);
-      }
-      el.textContent = Math.floor(current).toLocaleString();
-    }, 18);
+    let current = 0;
+    // Use requestAnimationFrame for smooth, performant animation
+    const duration = 1200; // ms
+    const startTime = performance.now();
+
+    function tick(now) {
+      const elapsed  = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out cubic
+      const eased    = 1 - Math.pow(1 - progress, 3);
+      current = Math.floor(eased * target);
+      el.textContent = current.toLocaleString();
+      if (progress < 1) requestAnimationFrame(tick);
+      else el.textContent = target.toLocaleString();
+    }
+
+    requestAnimationFrame(tick);
   });
 }
 
-// ─────────────────────────────────────
-// FAQ ACCORDION
-// ─────────────────────────────────────
-function setupFAQ() {
-  var items = document.querySelectorAll('.faq-item');
-  items.forEach(function (item) {
-    var btn = item.querySelector('.faq-btn');
+// ─── FAQ ─────────────────────────────────────────────────────────────────────
+function initFAQ() {
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const btn = item.querySelector('.faq-btn');
     if (!btn) return;
-    btn.addEventListener('click', function () {
-      var isOpen = item.classList.contains('open');
+
+    btn.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
       // close all
-      items.forEach(function (i) { i.classList.remove('open'); });
-      // open this one if it was closed
-      if (!isOpen) item.classList.add('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-btn')?.setAttribute('aria-expanded', 'false');
+      });
+      // toggle clicked
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
     });
   });
 }
 
-// ─────────────────────────────────────
-// ROLE SELECTOR
-// ─────────────────────────────────────
-function setupRoles() {
-  var btns = document.querySelectorAll('.role-opt');
-  btns.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      btns.forEach(function (b) { b.classList.remove('selected'); });
+// ─── ROLE SELECTOR ───────────────────────────────────────────────────────────
+function initRoles() {
+  document.querySelectorAll('.role-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.role-opt').forEach(b => {
+        b.classList.remove('selected');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('selected');
-      selectedRole = btn.getAttribute('data-role') || 'both';
+      btn.setAttribute('aria-pressed', 'true');
+      selectedRole = btn.dataset.role || 'both';
     });
   });
 }
 
-// ─────────────────────────────────────
-// FORM
-// ─────────────────────────────────────
-function setupForm() {
-  var form     = document.getElementById('regForm');
-  var emailEl  = document.getElementById('emailInput');
-  var userEl   = document.getElementById('usernameInput');
-  var msgEl    = document.getElementById('msgInput');
+// ─── FORM ────────────────────────────────────────────────────────────────────
+function initForm() {
+  const form      = document.getElementById('regForm');
+  const emailEl   = document.getElementById('emailInput');
+  const userEl    = document.getElementById('usernameInput');
+  const msgEl     = document.getElementById('msgInput');
 
   if (!form) return;
 
-  // sanitise username live as user types
-  if (userEl) {
-    userEl.addEventListener('input', function () {
-      var v = userEl.value;
-      var clean = v.toLowerCase().replace(/[^a-z0-9_.]/g, '');
-      if (v !== clean) userEl.value = clean;
-    });
-    userEl.addEventListener('blur', function () { validateUsername(); });
-  }
+  // Validate on blur (not on every keystroke — no cursor jumping)
+  emailEl?.addEventListener('blur',  () => validateEmail(emailEl));
+  userEl?.addEventListener('blur',   () => validateUsername(userEl));
 
-  if (emailEl) {
-    emailEl.addEventListener('blur', function () { validateEmail(); });
-  }
+  // Clear field error as soon as user starts correcting it
+  emailEl?.addEventListener('input', () => clearFieldErr(emailEl, 'emailErr'));
+  userEl?.addEventListener('input',  () => clearFieldErr(userEl, 'usernameErr'));
 
-  // cap message at 500 chars
-  if (msgEl) {
-    msgEl.addEventListener('input', function () {
-      if (msgEl.value.length > 500) msgEl.value = msgEl.value.slice(0, 500);
-    });
-  }
+  // Hard cap message
+  msgEl?.addEventListener('input', () => {
+    if (msgEl.value.length > 500) msgEl.value = msgEl.value.slice(0, 500);
+  });
 
-  form.addEventListener('submit', function (e) {
+  form.addEventListener('submit', e => {
     e.preventDefault();
     handleSubmit();
   });
 }
 
-function handleSubmit() {
-  clearErrors();
+// ─── SUBMIT ──────────────────────────────────────────────────────────────────
+async function handleSubmit() {
+  if (isSubmitting) return;   // hard guard against double-submit
 
-  var emailEl = document.getElementById('emailInput');
-  var userEl  = document.getElementById('usernameInput');
-  var msgEl   = document.getElementById('msgInput');
+  clearAllErrors();
 
-  var email    = emailEl.value.trim().toLowerCase();
-  var username = userEl.value.trim().toLowerCase();
-  var message  = msgEl ? msgEl.value.trim().slice(0, 500) : '';
+  const emailEl = document.getElementById('emailInput');
+  const userEl  = document.getElementById('usernameInput');
+  const msgEl   = document.getElementById('msgInput');
+  const hpEl    = document.getElementById('hpField');
 
-  var ok = true;
-  if (!validateEmail())    ok = false;
-  if (!validateUsername()) ok = false;
-  if (!ok) return;
-
-  var members     = loadMembers();
-  var emailTaken  = members.some(function (m) { return m.email    === email;    });
-  var userTaken   = members.some(function (m) { return m.username === username; });
-
-  if (emailTaken || userTaken) {
-    showAlreadyIn();
+  // Honeypot check — bots fill this, real users don't
+  if (hpEl && hpEl.value.trim() !== '') {
+    // Silently pretend success to confuse bots
+    console.warn('[PortForge] Honeypot triggered.');
+    window.location.href = 'success.html';
     return;
   }
 
+  const email    = (emailEl?.value  || '').trim().toLowerCase();
+  const username = (userEl?.value   || '').trim().toLowerCase();
+  const message  = (msgEl?.value    || '').trim().slice(0, 500);
+
+  // Client-side validation
+  let valid = true;
+  if (!validateEmail(emailEl))    valid = false;
+  if (!validateUsername(userEl))  valid = false;
+
+  // Role guard
+  if (!VALID_ROLES.includes(selectedRole)) {
+    selectedRole = 'both';
+  }
+
+  if (!valid) return;
+
+  isSubmitting = true;
   setLoading(true);
 
-  var entry = {
-    id:       uid(),
-    email:    email,
-    username: username,
-    role:     selectedRole,
-    message:  safeText(message),
-    joinedAt: new Date().toISOString()
-  };
+  try {
+    const { error } = await db
+      .from('users')
+      .insert({
+        email,
+        username,
+        role:    selectedRole,
+        message: message || null,   // store NULL not empty string
+      });
 
-  setTimeout(function () {
-    saveEntry(entry);
+    if (error) {
+      handleDBError(error);
+      return;
+    }
+
+    // ✅ Success
     window.location.href = 'success.html';
-  }, 1000);
-}
 
-// ─────────────────────────────────────
-// VALIDATION
-// ─────────────────────────────────────
-function validateEmail() {
-  var el  = document.getElementById('emailInput');
-  var err = document.getElementById('emailErr');
-  var v   = el.value.trim().toLowerCase();
-
-  if (!v) {
-    setErr(el, err, 'Email is required'); return false;
+  } catch (e) {
+    // Network failure / Supabase unreachable
+    showStatus({
+      type:    'error',
+      icon:    '⚠️',
+      heading: 'Connection failed.',
+      body:    'Check your internet connection and try again.',
+    });
+    console.error('[PortForge] Unexpected error:', e);
+  } finally {
+    isSubmitting = false;
+    setLoading(false);
   }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) {
-    setErr(el, err, 'Enter a valid email address'); return false;
+}
+
+// ─── DB ERROR HANDLER ────────────────────────────────────────────────────────
+/**
+ * Supabase Postgres error codes:
+ *   23505 = unique_violation  (duplicate email or username)
+ *   23514 = check_violation   (role not in allowed values)
+ */
+function handleDBError(error) {
+  const code = error.code || '';
+  const msg  = (error.message || '').toLowerCase();
+
+  if (code === '23505') {
+    if (msg.includes('username')) {
+      // Username taken — keep form visible, show inline error only
+      const el  = document.getElementById('usernameInput');
+      const err = document.getElementById('usernameErr');
+      markBad(el, err, 'That username is already taken — try another.');
+      el?.focus();
+    } else {
+      // Email taken — friendly panel, hide form
+      showStatus({
+        type:    'already-in',
+        icon:    '🔥',
+        heading: 'You\'re already forged in.',
+        body:    'That email is already registered. Your spot is secured — we\'ll reach out when access opens.',
+      });
+      hideForm();
+    }
+    return;
   }
-  clearErr(el, err);
-  return true;
-}
 
-function validateUsername() {
-  var el  = document.getElementById('usernameInput');
-  var err = document.getElementById('usernameErr');
-  var v   = el.value.trim().toLowerCase();
-
-  if (!v)        { setErr(el, err, 'Username is required'); return false; }
-  if (v.length < 3)  { setErr(el, err, 'Must be at least 3 characters'); return false; }
-  if (v.length > 20) { setErr(el, err, 'Must be 20 characters or fewer'); return false; }
-  if (!/^[a-z0-9_.]+$/.test(v)) {
-    setErr(el, err, 'Letters, numbers, underscores and dots only'); return false;
-  }
-  if (/^[._]|[._]$/.test(v)) {
-    setErr(el, err, "Can't start or end with . or _"); return false;
-  }
-  if (/[._]{2,}/.test(v)) {
-    setErr(el, err, 'No consecutive dots or underscores'); return false;
+  if (code === '23514') {
+    showStatus({
+      type:    'error',
+      icon:    '⚠️',
+      heading: 'Something looks off.',
+      body:    'Please refresh the page and try again.',
+    });
+    return;
   }
 
-  clearErr(el, err);
-  return true;
+  // Catch-all
+  showStatus({
+    type:    'error',
+    icon:    '⚠️',
+    heading: 'Something went wrong.',
+    body:    'Our servers hit a snag. Give it a moment and try again.',
+  });
+  console.error('[PortForge] DB error:', error);
 }
 
-function setErr(inputEl, errEl, msg) {
-  if (inputEl) inputEl.classList.add('bad');
-  if (errEl)   errEl.textContent = msg;
+// ─── STATUS PANEL ────────────────────────────────────────────────────────────
+/**
+ * @param {{ type: 'already-in'|'error', icon: string, heading: string, body: string }} opts
+ */
+function showStatus({ type, icon, heading, body }) {
+  const panel = document.getElementById('statusPanel');
+  if (!panel) return;
+
+  panel.querySelector('#statusIcon').textContent    = icon;
+  panel.querySelector('#statusHeading').textContent = heading;
+  panel.querySelector('#statusBody').textContent    = body;
+
+  panel.classList.remove('hidden', 'is-error');
+  if (type === 'error') panel.classList.add('is-error');
+
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function clearErr(inputEl, errEl) {
-  if (inputEl) inputEl.classList.remove('bad');
-  if (errEl)   errEl.textContent = '';
-}
-
-function clearErrors() {
-  document.querySelectorAll('input.bad').forEach(function (el) { el.classList.remove('bad'); });
-  document.querySelectorAll('.field-err').forEach(function (el) { el.textContent = ''; });
-}
-
-// ─────────────────────────────────────
-// ALREADY-IN MESSAGE
-// ─────────────────────────────────────
-function showAlreadyIn() {
-  var box  = document.getElementById('alreadyMsg');
-  var form = document.getElementById('regForm');
-  if (box)  box.classList.remove('hidden');
+function hideForm() {
+  const form = document.getElementById('regForm');
   if (form) form.style.display = 'none';
-  window.scrollTo(0, 0);
 }
 
-// ─────────────────────────────────────
-// LOADING STATE
-// ─────────────────────────────────────
+// ─── VALIDATION ──────────────────────────────────────────────────────────────
+function validateEmail(el) {
+  const v   = (el?.value || '').trim().toLowerCase();
+  const err = document.getElementById('emailErr');
+
+  if (!v)                                      return markBad(el, err, 'Email is required.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return markBad(el, err, 'Enter a valid email address.');
+
+  markGood(el, err);
+  return true;
+}
+
+function validateUsername(el) {
+  const v   = (el?.value || '').trim().toLowerCase();
+  const err = document.getElementById('usernameErr');
+
+  if (!v)            return markBad(el, err, 'Username is required.');
+  if (v.length < 3)  return markBad(el, err, 'Must be at least 3 characters.');
+  if (v.length > 20) return markBad(el, err, 'Must be 20 characters or fewer.');
+  if (!/^[a-z0-9_.]+$/.test(v))     return markBad(el, err, 'Letters, numbers, underscores, and dots only.');
+  if (/^[._]/.test(v) || /[._]$/.test(v)) return markBad(el, err, "Can't start or end with . or _");
+  if (/[._]{2,}/.test(v))           return markBad(el, err, 'No consecutive dots or underscores.');
+
+  markGood(el, err);
+  return true;
+}
+
+// ─── FIELD STATE HELPERS ─────────────────────────────────────────────────────
+function markBad(inputEl, errEl, msg) {
+  inputEl?.classList.add('bad');
+  if (errEl) errEl.textContent = msg;
+  return false;
+}
+
+function markGood(inputEl, errEl) {
+  inputEl?.classList.remove('bad');
+  if (errEl) errEl.textContent = '';
+}
+
+function clearFieldErr(inputEl, errId) {
+  inputEl?.classList.remove('bad');
+  const err = document.getElementById(errId);
+  if (err) err.textContent = '';
+}
+
+function clearAllErrors() {
+  document.querySelectorAll('input.bad').forEach(el => el.classList.remove('bad'));
+  document.querySelectorAll('.field-err').forEach(el => { el.textContent = ''; });
+}
+
+// ─── LOADING STATE ────────────────────────────────────────────────────────────
 function setLoading(on) {
-  var btn     = document.getElementById('submitBtn');
-  var label   = document.getElementById('btnLabel');
-  var spinner = document.getElementById('btnSpinner');
+  const btn     = document.getElementById('submitBtn');
+  const label   = document.getElementById('btnLabel');
+  const spinner = document.getElementById('btnSpinner');
 
   if (!btn) return;
   btn.disabled = on;
   if (label)   label.textContent = on ? 'Securing your spot…' : 'Lock in my spot';
   if (spinner) spinner.classList.toggle('hidden', !on);
-}
-
-// ─────────────────────────────────────
-// LOCAL STORAGE
-// ─────────────────────────────────────
-function loadMembers() {
-  try {
-    var d = localStorage.getItem(STORE_KEY);
-    return d ? JSON.parse(d) : [];
-  } catch (e) { return []; }
-}
-
-function saveEntry(entry) {
-  try {
-    var members = loadMembers();
-    members.push(entry);
-    localStorage.setItem(STORE_KEY, JSON.stringify(members));
-  } catch (e) {
-    console.error('PortForge: save failed', e);
-  }
-}
-
-// ─────────────────────────────────────
-// UTILITIES
-// ─────────────────────────────────────
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-}
-
-function safeText(str) {
-  var d = document.createElement('div');
-  d.textContent = str;
-  return d.innerHTML;
 }

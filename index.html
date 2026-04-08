@@ -3,38 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PortForge — Secure Your Username</title>
+  <title>PortForge &mdash; Secure Your Username</title>
+  <meta name="description" content="PortForge is the guild for video editors and clients. Join early, secure your username, and get founding member status." />
   <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-  <!-- BIG BACKGROUND LOGO — fixed, very faint, sits behind everything -->
+  <!-- Background flame logo — decorative, aria-hidden -->
   <div class="bg-flame" aria-hidden="true">
     <img src="logo real.png" alt="" />
   </div>
 
-  <!-- ═══════════════════════════════════════
+  <!-- ══════════════════════════════════════
        PAGE 1 — LANDING
-  ═══════════════════════════════════════ -->
+  ══════════════════════════════════════ -->
   <div id="landingPage">
 
-    <!-- HEADER -->
     <header class="header">
       <div class="logo">
         <div class="logo-mark">
-          <img src="logo real.png" alt="PortForge" />
+          <img src="logo real.png" alt="PortForge logo" />
         </div>
         <span>PortForge</span>
       </div>
-      <button onclick="showForm()">Join Early →</button>
+      <button class="btn-pill" onclick="showForm()">Join Early &rarr;</button>
     </header>
 
-    <!-- HERO -->
+    <!-- Hero -->
     <section class="hero">
       <div class="eyebrow">
-        <span class="green-dot"></span>
-        Early access — spots are limited
+        <span class="green-dot" aria-hidden="true"></span>
+        Early access &mdash; spots are limited
       </div>
 
       <h1>The Guild for<br /><em>Editors</em> &amp; Clients</h1>
@@ -46,146 +48,149 @@
 
       <div class="hero-btns">
         <button class="btn-main" onclick="showForm()">Secure Your Username</button>
-        <a href="#system" class="btn-ghost">How it works ↓</a>
+        <a href="#system" class="btn-ghost">How it works &darr;</a>
       </div>
 
       <div class="counter-pill">
-        <span id="countNum">—</span>
+        <span id="countNum" aria-live="polite">&mdash;</span>
         <span class="counter-label">founding members have joined</span>
       </div>
     </section>
 
-    <!-- PLATFORM PREVIEW -->
-    <section class="preview-wrap">
+    <!-- Platform preview mockup -->
+    <section class="preview-wrap" aria-label="Platform preview">
       <div class="preview-box">
         <span class="preview-label">Platform Preview</span>
 
         <div class="mock-card">
-          <div class="mock-ava blue"></div>
+          <div class="mock-ava blue" aria-hidden="true"></div>
           <div class="mock-info">
-            <div class="mock-name">CinematicAlex <span class="badge ember">🔥 Ember</span></div>
-            <div class="mock-meta">247 projects &nbsp;·&nbsp; 4.98 ★ &nbsp;·&nbsp; Instant withdrawal</div>
+            <div class="mock-name">
+              CinematicAlex
+              <span class="badge ember">&#128293; Ember</span>
+            </div>
+            <div class="mock-meta">247 projects &nbsp;&middot;&nbsp; 4.98 &#9733; &nbsp;&middot;&nbsp; Instant withdrawal</div>
           </div>
-          <div class="mock-btn">Hire</div>
+          <div class="mock-btn" aria-hidden="true">Hire</div>
         </div>
 
-        <div class="mock-divider"></div>
+        <div class="mock-divider" aria-hidden="true"></div>
 
         <div class="mock-card">
-          <div class="mock-ava orange"></div>
+          <div class="mock-ava orange" aria-hidden="true"></div>
           <div class="mock-info">
-            <div class="mock-name">Project Brief — <span class="green">$500</span></div>
-            <div class="mock-meta">Cinematic short &nbsp;·&nbsp; Min rank: Ember &nbsp;·&nbsp; 3 applied</div>
+            <div class="mock-name">Project Brief &mdash; <span class="green">$500</span></div>
+            <div class="mock-meta">Cinematic short &nbsp;&middot;&nbsp; Min rank: Ember &nbsp;&middot;&nbsp; 3 applied</div>
           </div>
-          <div class="mock-btn orange">Apply</div>
+          <div class="mock-btn orange" aria-hidden="true">Apply</div>
         </div>
 
         <div class="escrow-bar">
-          🔒 &nbsp;Escrow active — client funds are secured until you deliver
+          &#128274;&nbsp; Escrow active &mdash; client funds secured until delivery
         </div>
       </div>
     </section>
 
-    <!-- HOW IT WORKS -->
+    <!-- How it works -->
     <section class="section" id="system">
       <div class="section-inner">
         <p class="label">The System</p>
-        <h2>Built different.<br />On purpose.</h2>
+        <h2>Built different. On purpose.</h2>
         <p class="section-sub">Most platforms let anyone message anyone. We built something cleaner.</p>
 
         <div class="grid-2">
           <div class="card">
             <div class="card-num">01</div>
             <h3>Post or Apply</h3>
-            <p>Clients post jobs with a minimum rank requirement. Editors apply — no random DMs, no spam, no chaos. Controlled by design.</p>
+            <p>Clients post jobs with a minimum rank requirement. Editors apply &mdash; no spam, no cold messages, no chaos.</p>
           </div>
           <div class="card">
             <div class="card-num">02</div>
             <h3>Escrow Protects Both Sides</h3>
-            <p>Client funds lock the moment work starts. They only release to you once the client approves. Neither side can get cheated.</p>
+            <p>Client funds lock the moment work starts. Released only when the client approves. Neither side can get cheated.</p>
           </div>
           <div class="card">
             <div class="card-num">03</div>
             <h3>Every Job Builds Your Rank</h3>
-            <p>Deliver great work → earn trust → rank up → unlock faster payouts, lower fees, and better-paying clients. The system rewards real quality.</p>
+            <p>Deliver great work &rarr; earn trust &rarr; rank up &rarr; unlock faster payouts, lower fees, and better clients.</p>
           </div>
           <div class="card">
             <div class="card-num">04</div>
             <h3>Reputation is Your Resume</h3>
-            <p>No follower counts. No ads. Clients hire based on your track record and actual proof of work — nothing else.</p>
+            <p>No follower counts. No paid boosts. Clients hire based on your track record and actual proof of work.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- RANK PATH -->
+    <!-- Rank system -->
     <section class="section rank-section">
       <div class="section-inner">
         <p class="label">The Forge Ranks</p>
         <h2>Every editor starts at zero.<br />The climb is the point.</h2>
-        <p class="section-sub">Your rank controls your access, your payout speed, and your minimum price floor. It is not cosmetic.</p>
+        <p class="section-sub">Your rank controls your access, payout speed, and minimum price floor. It is not cosmetic.</p>
 
-        <div class="rank-row">
-          <div class="rank-node">
-            <div class="rank-icon spark">✦</div>
+        <div class="rank-row" role="list">
+          <div class="rank-node" role="listitem">
+            <div class="rank-icon spark" aria-label="Spark rank">&#10022;</div>
             <span class="rank-name">Spark</span>
-            <span class="rank-sub">2–3 day payouts</span>
+            <span class="rank-sub">2&ndash;3 day payouts</span>
           </div>
-          <span class="rank-arrow">→</span>
-          <div class="rank-node">
-            <div class="rank-icon ember">🔥</div>
+          <span class="rank-arrow" aria-hidden="true">&rarr;</span>
+          <div class="rank-node" role="listitem">
+            <div class="rank-icon ember" aria-label="Ember rank">&#128293;</div>
             <span class="rank-name">Ember</span>
             <span class="rank-sub">24h payouts</span>
           </div>
-          <span class="rank-arrow">→</span>
-          <div class="rank-node">
-            <div class="rank-icon flame">🔥</div>
+          <span class="rank-arrow" aria-hidden="true">&rarr;</span>
+          <div class="rank-node" role="listitem">
+            <div class="rank-icon flame" aria-label="Flame rank">&#128293;</div>
             <span class="rank-name">Flame</span>
             <span class="rank-sub">Same-day</span>
           </div>
-          <span class="rank-arrow">→</span>
-          <div class="rank-node">
-            <div class="rank-icon inferno">🔥</div>
+          <span class="rank-arrow" aria-hidden="true">&rarr;</span>
+          <div class="rank-node" role="listitem">
+            <div class="rank-icon inferno" aria-label="Inferno rank">&#128293;</div>
             <span class="rank-name">Inferno</span>
             <span class="rank-sub">Instant</span>
           </div>
-          <span class="rank-arrow">→</span>
-          <div class="rank-node mystery">
-            <div class="rank-icon unknown">?</div>
+          <span class="rank-arrow" aria-hidden="true">&rarr;</span>
+          <div class="rank-node mystery" role="listitem">
+            <div class="rank-icon unknown" aria-label="Mythic rank — details coming">?</div>
             <span class="rank-name">Mythic</span>
             <span class="rank-sub">Global board</span>
           </div>
-          <span class="rank-arrow">→</span>
-          <div class="rank-node mystery">
-            <div class="rank-icon unknown">?</div>
+          <span class="rank-arrow" aria-hidden="true">&rarr;</span>
+          <div class="rank-node mystery" role="listitem">
+            <div class="rank-icon unknown" aria-label="Hidden endgame rank">?</div>
             <span class="rank-name">???</span>
             <span class="rank-sub">Endgame</span>
           </div>
         </div>
 
-        <p class="rank-note">Mythic editors enter a permanent global leaderboard — ranked by trust, recognized forever.</p>
+        <p class="rank-note">Mythic editors enter a permanent global leaderboard &mdash; ranked by trust, recognized forever.</p>
       </div>
     </section>
 
-    <!-- TRUST PILLARS -->
+    <!-- Why it works -->
     <section class="section">
       <div class="section-inner">
         <p class="label">Why It Actually Works</p>
         <div class="grid-3">
           <div class="card">
-            <span class="card-icon">⚡</span>
+            <span class="card-icon" aria-hidden="true">&#9889;</span>
             <h3>No waiting game</h3>
-            <p>Skill moves you up — not how long you've been here. A great editor at Spark won't stay at Spark.</p>
+            <p>Skill moves you up &mdash; not how long you've been here. A great editor at Spark won't stay at Spark.</p>
           </div>
           <div class="card">
-            <span class="card-icon">🚫</span>
+            <span class="card-icon" aria-hidden="true">&#128683;</span>
             <h3>Zero spam</h3>
-            <p>No cold messages. Apply-only communication. Daily application limits are enforced. Every interaction is intentional.</p>
+            <p>No cold messages. Apply-only communication. Daily limits enforced. Every interaction is intentional.</p>
           </div>
           <div class="card">
-            <span class="card-icon">🔒</span>
+            <span class="card-icon" aria-hidden="true">&#128274;</span>
             <h3>Escrow, always</h3>
-            <p>Funds are locked before work starts, every single time. No ghosting, no payment risk, no exceptions.</p>
+            <p>Funds locked before work starts, every time. No ghosting, no payment risk, no exceptions.</p>
           </div>
         </div>
       </div>
@@ -200,62 +205,62 @@
         <div class="faq-list">
 
           <div class="faq-item">
-            <button class="faq-btn">
+            <button class="faq-btn" aria-expanded="false">
               <span>Who is PortForge for?</span>
-              <span class="faq-plus">+</span>
+              <span class="faq-plus" aria-hidden="true">+</span>
             </button>
-            <div class="faq-body">
-              <p>Video editors — beginners who want to grow fast, and professionals who want better clients with zero spam. Also for clients who are done with chaotic platforms and zero accountability.</p>
+            <div class="faq-body" role="region">
+              <p>Video editors &mdash; beginners who want to grow fast, and professionals who want better clients with zero spam. Also for clients who are done with chaotic platforms and zero accountability.</p>
             </div>
           </div>
 
           <div class="faq-item">
-            <button class="faq-btn">
-              <span>What is escrow — in plain words?</span>
-              <span class="faq-plus">+</span>
+            <button class="faq-btn" aria-expanded="false">
+              <span>What is escrow, in plain words?</span>
+              <span class="faq-plus" aria-hidden="true">+</span>
             </button>
-            <div class="faq-body">
-              <p>When a client hires you, their money locks into a secure hold — it's not in their pocket anymore, but it's not in yours yet either. The moment they approve your delivery, it releases to you. If something goes wrong, PortForge steps in. Nobody gets robbed.</p>
+            <div class="faq-body" role="region">
+              <p>When a client hires you, their money locks into a secure hold. Not in their pocket, not in yours. The moment they approve your delivery, it releases to you. If something goes wrong, PortForge steps in. Nobody gets robbed.</p>
             </div>
           </div>
 
           <div class="faq-item">
-            <button class="faq-btn">
+            <button class="faq-btn" aria-expanded="false">
               <span>Is there a platform fee?</span>
-              <span class="faq-plus">+</span>
+              <span class="faq-plus" aria-hidden="true">+</span>
             </button>
-            <div class="faq-body">
-              <p>Yes — a small cut per transaction, standard for any marketplace. Higher-ranked editors pay lower fees. We grow when you grow, so it's in our interest to help you rank up.</p>
+            <div class="faq-body" role="region">
+              <p>Yes &mdash; a small cut per transaction, standard for any marketplace. Higher-ranked editors pay lower fees. We grow when you grow.</p>
             </div>
           </div>
 
           <div class="faq-item">
-            <button class="faq-btn">
+            <button class="faq-btn" aria-expanded="false">
               <span>Why join before launch?</span>
-              <span class="faq-plus">+</span>
+              <span class="faq-plus" aria-hidden="true">+</span>
             </button>
-            <div class="faq-body">
-              <p>Early members lock their username forever, receive Founding Member status on their profile (rare, visible, permanent), and get first access when we open. The platform will be invite-only at launch — your name is your key.</p>
+            <div class="faq-body" role="region">
+              <p>Early members lock their username forever, get a visible Founding Member badge on their profile, and get first access when we open. The platform will be invite-only at launch &mdash; your name is your key.</p>
             </div>
           </div>
 
           <div class="faq-item">
-            <button class="faq-btn">
+            <button class="faq-btn" aria-expanded="false">
               <span>What editing tools are supported?</span>
-              <span class="faq-plus">+</span>
+              <span class="faq-plus" aria-hidden="true">+</span>
             </button>
-            <div class="faq-body">
-              <p>All of them. Premiere Pro, After Effects, DaVinci Resolve, CapCut, Final Cut — the platform doesn't care what you use. Your portfolio and reputation do the talking.</p>
+            <div class="faq-body" role="region">
+              <p>All of them. Premiere Pro, After Effects, DaVinci Resolve, CapCut &mdash; the platform doesn't care what you use. Your portfolio and reputation do the talking.</p>
             </div>
           </div>
 
           <div class="faq-item">
-            <button class="faq-btn">
+            <button class="faq-btn" aria-expanded="false">
               <span>Is this safe and legitimate?</span>
-              <span class="faq-plus">+</span>
+              <span class="faq-plus" aria-hidden="true">+</span>
             </button>
-            <div class="faq-body">
-              <p>Yes. Every payment goes through escrow. Every dispute goes through platform mediation. No direct deals, no PayPal links in DMs, no grey areas. The system is designed to protect both sides from day one.</p>
+            <div class="faq-body" role="region">
+              <p>Yes. Every payment goes through escrow. Every dispute goes through platform mediation. No direct deals, no PayPal links in DMs, no grey areas. The system is built to protect both sides from day one.</p>
             </div>
           </div>
 
@@ -263,53 +268,53 @@
       </div>
     </section>
 
-    <!-- PROOF BAR -->
-    <section class="proof-bar">
+    <!-- Proof bar -->
+    <section class="proof-bar" aria-label="Trust signals">
       <div class="proof-item">
-        <span class="proof-big" id="proofNum">—</span>
+        <span class="proof-big" id="proofNum" aria-live="polite">&mdash;</span>
         <span class="proof-small">founding members</span>
       </div>
-      <div class="proof-divider"></div>
+      <div class="proof-divider" aria-hidden="true"></div>
       <div class="proof-item">
-        <span class="proof-icon">🔒</span>
+        <span class="proof-icon" aria-hidden="true">&#128274;</span>
         <span class="proof-small">Escrow-protected payments</span>
       </div>
-      <div class="proof-divider"></div>
+      <div class="proof-divider" aria-hidden="true"></div>
       <div class="proof-item">
-        <span class="proof-icon">✦</span>
+        <span class="proof-icon" aria-hidden="true">&#10022;</span>
         <span class="proof-small">Invite-only at launch</span>
       </div>
     </section>
 
-    <!-- FINAL CTA -->
+    <!-- Final CTA -->
     <section class="final-cta">
       <h2>Your username is waiting.<br />Someone else is about to claim it.</h2>
       <p>Join the founding members. Lock in your name before we open.</p>
       <button class="btn-main large" onclick="showForm()">Secure My Username</button>
     </section>
 
-    <!-- FOOTER -->
     <footer class="footer">
-      <p>Questions? <a href="mailto:portforgeofficial@gmail.com">portforgeofficial@gmail.com</a></p>
+      <!-- Email written as text — no obfuscation, no third-party scripts mangling it -->
+      <p>Questions? <a href="mailto:portforgeofficial@gmail.com">portforgeofficial&#64;gmail.com</a></p>
       <p class="footer-copy">&copy; 2026 PortForge &mdash; The Guild for Editors &amp; Clients.</p>
     </footer>
 
-  </div>
-  <!-- end landingPage -->
+  </div><!-- /landingPage -->
 
 
-  <!-- ═══════════════════════════════════════
+  <!-- ══════════════════════════════════════
        PAGE 2 — REGISTER FORM
-  ═══════════════════════════════════════ -->
+  ══════════════════════════════════════ -->
   <div id="formPage" class="hidden">
-
     <div class="form-page-inner">
 
-      <button class="back-link" onclick="showLanding()">← Back</button>
+      <button class="back-link" onclick="showLanding()" aria-label="Back to landing page">
+        &larr; Back
+      </button>
 
-      <div class="logo form-logo">
+      <div class="logo form-logo" aria-hidden="true">
         <div class="logo-mark">
-          <img src="logo real.png" alt="PortForge" />
+          <img src="logo real.png" alt="" />
         </div>
         <span>PortForge</span>
       </div>
@@ -319,46 +324,95 @@
         <p>Founding members get permanent status, priority access, and their username locked for life. No credit card needed.</p>
       </div>
 
-      <!-- Already-in message (hidden until triggered) -->
-      <div id="alreadyMsg" class="already-box hidden">
-        <div class="already-flame">🔥</div>
-        <h3>You're already forged in.</h3>
-        <p>Your spot is locked. Your username is yours. Sit tight — we'll email you the moment access opens.</p>
+      <!-- Status panel — shown on already-in or error, hidden by default -->
+      <div id="statusPanel" class="status-panel hidden" role="alert" aria-live="assertive">
+        <div class="status-icon" id="statusIcon">&#128293;</div>
+        <h3 id="statusHeading">You're already forged in.</h3>
+        <p id="statusBody">Your spot is locked. Your username is yours. Sit tight &mdash; we'll email you the moment access opens.</p>
       </div>
 
-      <!-- The Form -->
-      <form id="regForm" novalidate>
+      <form id="regForm" novalidate autocomplete="off">
 
-        <div class="field">
-          <label for="emailInput">Email <span class="req-star">*</span></label>
-          <input type="email" id="emailInput" placeholder="you@example.com" autocomplete="email" />
-          <span class="field-err" id="emailErr"></span>
+        <!-- HONEYPOT — hidden from real users, bots fill it in -->
+        <!-- DO NOT add labels or visible styling to this field -->
+        <div class="hp-field" aria-hidden="true">
+          <input type="text" name="website" id="hpField" tabindex="-1" autocomplete="off" />
         </div>
 
         <div class="field">
-          <label for="usernameInput">Username <span class="req-star">*</span></label>
-          <input type="text" id="usernameInput" placeholder="your_handle" maxlength="20" autocomplete="off" />
-          <span class="field-hint">3–20 characters · letters, numbers, underscores</span>
-          <span class="field-err" id="usernameErr"></span>
+          <label for="emailInput">Email <span class="req-star" aria-hidden="true">*</span></label>
+          <input
+            type="email"
+            id="emailInput"
+            name="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            inputmode="email"
+            required
+            aria-required="true"
+            aria-describedby="emailErr"
+          />
+          <span class="field-err" id="emailErr" role="alert"></span>
         </div>
 
         <div class="field">
-          <label>I'm joining as <span class="req-star">*</span></label>
-          <div class="role-group">
-            <button type="button" class="role-opt" data-role="editor">✂️ Editor</button>
-            <button type="button" class="role-opt" data-role="client">📋 Client</button>
-            <button type="button" class="role-opt selected" data-role="both">⚡ Both</button>
+          <label for="usernameInput">Username <span class="req-star" aria-hidden="true">*</span></label>
+          <input
+            type="text"
+            id="usernameInput"
+            name="username"
+            placeholder="your_handle"
+            maxlength="20"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            required
+            aria-required="true"
+            aria-describedby="usernameHint usernameErr"
+          />
+          <span class="field-hint" id="usernameHint">3&ndash;20 characters &middot; letters, numbers, underscores, dots</span>
+          <span class="field-err" id="usernameErr" role="alert"></span>
+        </div>
+
+        <div class="field">
+          <label id="roleLabel">I'm joining as <span class="req-star" aria-hidden="true">*</span></label>
+          <div class="role-group" role="group" aria-labelledby="roleLabel">
+            <button type="button" class="role-opt" data-role="editor" aria-pressed="false">
+              &#9986;&#65039; Editor
+            </button>
+            <button type="button" class="role-opt" data-role="client" aria-pressed="false">
+              &#128203; Client
+            </button>
+            <button type="button" class="role-opt selected" data-role="both" aria-pressed="true">
+              &#9889; Both
+            </button>
           </div>
         </div>
 
         <div class="field">
-          <label for="msgInput">Message to the Forge <span class="opt-label">(optional)</span></label>
-          <input type="text" id="msgInput" placeholder="Anything you want us to know?" maxlength="500" />
+          <label for="msgInput">
+            Message to the Forge
+            <span class="opt-label">(optional)</span>
+          </label>
+          <input
+            type="text"
+            id="msgInput"
+            name="message"
+            placeholder="Anything you want us to know?"
+            maxlength="500"
+          />
         </div>
+
+        <!--
+          CAPTCHA SLOT — uncomment when you add Cloudflare Turnstile or reCAPTCHA
+          Turnstile:   <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY"></div>
+          reCAPTCHA:   <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
+        -->
 
         <button type="submit" id="submitBtn" class="submit-btn">
           <span id="btnLabel">Lock in my spot</span>
-          <span id="btnSpinner" class="spinner hidden"></span>
+          <span id="btnSpinner" class="spinner hidden" aria-hidden="true"></span>
         </button>
 
         <p class="fine-print">No spam. No credit card. Just your name, secured.</p>
@@ -366,9 +420,11 @@
       </form>
 
     </div>
-  </div>
-  <!-- end formPage -->
+  </div><!-- /formPage -->
 
+  <!-- Supabase CDN — must load before script.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="script.js"></script>
+
 </body>
 </html>
